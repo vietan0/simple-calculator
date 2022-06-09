@@ -41,10 +41,10 @@ export default function App() {
 				mixed[i + 1] *= -1;
 			}
 		}
-		// console.log("mixed :>> ", mixed);
 
 		// * 2. Multiply & divide first
 		while (mixed.some(n => n === "*" || n === "/")) {
+			// replace every 6 / 3 with 2
 			for (let i = 0; i < mixed.length; i++) {
 				if (mixed[i] === "*") {
 					let result = mixed[i - 1] * mixed[i + 1];
@@ -52,35 +52,30 @@ export default function App() {
 				}
 				if (mixed[i] === "/") {
 					let result = mixed[i - 1] / mixed[i + 1];
-					mixed.splice(i - 1, 3, result); // replace 5 / 7 with 0.714
+					mixed.splice(i - 1, 3, result);
 				}
-				// console.log("after mult-div loop :>> ", mixed);
 			}
 		}
 
 		// * 3. Add & subtract
-		while (mixed.some(n => n === "+" || n === "-")) {
+		while (mixed.some(n => n === "+")) {
+			// replace every 6 + 3 with 9
 			for (let i = 0; i < mixed.length; i++) {
 				if (mixed[i] === "+") {
-					let result;
-					// e.g. [5, +, -3] => 5 - 3
-					if (mixed[i + 1] < 0) {
-						result = mixed[i - 1] - Math.abs(mixed[i + 1]);
-					} else result = mixed[i - 1] + mixed[i + 1];
-					mixed.splice(i - 1, 3, result);
-				}
-				if (mixed[i] === "-") {
-					let result = mixed[i - 1] - mixed[i + 1];
+					let result = mixed[i - 1] + mixed[i + 1];
 					mixed.splice(i - 1, 3, result);
 				}
 			}
-			// console.log("after add-subtr loop :>> ", mixed);
 		}
 
-		// * 4. Fix JS rounding issue
 		let answer = [...mixed][0];
-		let decimalDigits = answer.toString().split(".")[1].slice(0, -1).split("");
-		if (decimalDigits.every(d => d === "9" || d === "0")) answer = Math.round(answer);
+		// * 4. Fix JS rounding issue
+		if (answer.toString().includes(".")) {
+			let decimalDigits = answer.toString().split(".")[1].slice(0, -1).split("");
+			if (decimalDigits.every(d => d === "9" || d === "0")) answer = answer.toFixed(0);
+			else if (decimalDigits.slice(1).every(d => d === "9" || d === "0"))
+				answer = answer.toFixed(1);
+		}
 
 		setAns(`${state} =`);
 		setState(isNaN(answer) ? "NaN" : answer);
@@ -152,6 +147,7 @@ export default function App() {
 	}
 	function handleKeyDown(e) {
 		if (e.key.match(/\d|[+\-*/.]|Backspace|Enter|=/)) {
+			e.preventDefault(); // override browser's
 			let key = e.key === "*" ? "×" : e.key === "/" ? "÷" : e.key;
 			setLastKey(key);
 
@@ -215,12 +211,7 @@ export default function App() {
 					by <a href="https://github.com/vietan0">Viet An</a>
 				</p>
 			</header>
-			<div
-				// onChange={handleChange}
-				onKeyDown={handleKeyDown}
-				id="display"
-				tabIndex="0"
-			>
+			<div onKeyDown={handleKeyDown} id="display" tabIndex="0">
 				<small>
 					<span id="ans">{ans}</span>
 					<span id="lastKey">lastKey: {lastKey}</span>

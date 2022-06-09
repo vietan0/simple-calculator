@@ -27,11 +27,16 @@ header > * {
 
 #display {
 	min-height: 64px;
-	border: 1px solid hsl(0, 0%, 80%);
+	outline: 1px solid hsl(0, 0%, 80%);
 	border-radius: 8px;
 	padding: 12px 12px 4px 12px;
 	display: flex;
 	flex-direction: column;
+	transition: all 0.05s ease-out;
+	&:focus {
+		outline: 4px solid hsla(231, 100%, 85%, 0.8);
+		// box-shadow: 0 0 0 0.2rem hsla(231, 100%, 74%, 0.8);
+	}
 
 	#state {
 		font-size: 1.7rem;
@@ -76,7 +81,7 @@ header > * {
 		&:hover {
 			background-color: hsl(240, 23%, 88%);
 		}
-		
+
 		&:active {
 			box-shadow: 0 0 0 0.15rem hsla(240, 2%, 64%, 0.8);
 			color: inherit;
