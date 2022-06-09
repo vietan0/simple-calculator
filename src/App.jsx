@@ -19,55 +19,47 @@ export default function App() {
 	}
 	function calculate() {
 		setLastKey("=");
-		// make a local copy & change "×" to "*" and "÷" to "/"
-		let str = state.slice().replace("×", "*").replace("÷", "/");
-		// add "0" if state start with "+" or "-"
-		if ((str[0] === "-" || str[0] === "+") && str.length > 1) str = "0" + str;
 
 		// * 1. Split str into array of numbers & signs
+		// make a local copy, replace with traditional signs, trim whitespaces
+		// consecutive minus "-" is sticked to next string: "+-3" => [+, -3]
+		let str = state.slice().replaceAll("×", "*").replaceAll("÷", "/").replaceAll(" ", "");
+
 		// split between <signs that don't follow another sign>.
-		// when encounter consecutive signs "+-",
-		// the minus "-" is sticked to next string: "+-3" => [+, -3]
+		let numbers = str.split(/(?<![+\-*/])[+\-*/]/).map(n => Number(n));
 		let signs = str.match(/(?<![+\-*/])[+\-*/]/g);
-		// console.log(signs);
-
-		let numbers = str
-			.split(/(?<![+\-*/])[+\-*/]/)
-			.filter(s => s !== "")
-			.map(n => Number(n));
-		// console.log(numbers);
-
 		let mixed = [];
 		for (let i = 0; i < numbers.length; i++) {
 			mixed.push(numbers[i]);
 			if (signs && i < signs.length) mixed.push(signs[i]);
 		}
-		// console.log(mixed);
 
 		// convert every "-5" to "+ (-5)"
 		for (let i = 0; i < mixed.length - 1; i++) {
 			if (mixed[i] === "-") {
 				mixed[i] = "+";
-				mixed[i + 1] = mixed[i + 1] * -1;
+				mixed[i + 1] *= -1;
 			}
 		}
-		// console.log(mixed);
+		// console.log("mixed :>> ", mixed);
 
 		// * 2. Multiply & divide first
-		for (let i = 0; i < mixed.length; i++) {
-			if (mixed[i] === "*") {
-				let result = mixed[i - 1] * mixed[i + 1];
-				mixed.splice(i - 1, 3, result);
+		while (mixed.some(n => n === "*" || n === "/")) {
+			for (let i = 0; i < mixed.length; i++) {
+				if (mixed[i] === "*") {
+					let result = mixed[i - 1] * mixed[i + 1];
+					mixed.splice(i - 1, 3, result);
+				}
+				if (mixed[i] === "/") {
+					let result = mixed[i - 1] / mixed[i + 1];
+					mixed.splice(i - 1, 3, result); // replace 5 / 7 with 0.714
+				}
+				// console.log("after mult-div loop :>> ", mixed);
 			}
-			if (mixed[i] === "/") {
-				let result = mixed[i - 1] / mixed[i + 1];
-				mixed.splice(i - 1, 3, result); // replace 5 / 7 with 0.714
-			}
-			// console.log(mixed);
 		}
 
 		// * 3. Add & subtract
-		while (mixed.length > 1) {
+		while (mixed.some(n => n === "+" || n === "-")) {
 			for (let i = 0; i < mixed.length; i++) {
 				if (mixed[i] === "+") {
 					let result;
@@ -81,11 +73,17 @@ export default function App() {
 					let result = mixed[i - 1] - mixed[i + 1];
 					mixed.splice(i - 1, 3, result);
 				}
-				// console.log(mixed);
 			}
+			// console.log("after add-subtr loop :>> ", mixed);
 		}
+
+		// * 4. Fix JS rounding issue
+		let answer = [...mixed][0];
+		let decimalDigits = answer.toString().split(".")[1].slice(0, -1).split("");
+		if (decimalDigits.every(d => d === "9" || d === "0")) answer = Math.round(answer);
+
 		setAns(`${state} =`);
-		setState(isNaN(mixed[0]) ? "NaN" : `${mixed[0]}`);
+		setState(isNaN(answer) ? "NaN" : answer);
 	}
 	function clear() {
 		setLastKey("AC");
@@ -139,11 +137,8 @@ export default function App() {
 
 			if (key.match(/[+\-×÷]/)) {
 				// console.log("key is sign");
-				console.log(state);
-				console.log(state.at(-2));
-				console.log(state.at(-4));
 				if (!/[+\-×÷]/.test(state.at(-1)) || !/[+\-×÷]/.test(state.at(-3))) {
-					// if the last 2 keys are not both signs
+					// only add if the last 2 keys are not both signs
 					if (state === "") add(key); // empty string
 					if (/\d/.test(state.at(-1))) add(` ${key}`); // last key is a number
 					else if (/[+\-×÷]/.test(state.at(-1))) {
@@ -157,7 +152,7 @@ export default function App() {
 	}
 	function handleKeyDown(e) {
 		if (e.key.match(/\d|[+\-*/.]|Backspace|Enter|=/)) {
-			let key = e.key;
+			let key = e.key === "*" ? "×" : e.key === "/" ? "÷" : e.key;
 			setLastKey(key);
 
 			if (state === "NaN") clear(key);
@@ -181,7 +176,7 @@ export default function App() {
 				if (key.match(/\d/)) {
 					// console.log("key is number");
 					if (state === "0") replace(key);
-					else if (/[+\-*\/]/.test(state.at(-1))) add(` ${key}`);
+					else if (/[+\-×÷]/.test(state.at(-1))) add(` ${key}`);
 					else add(key);
 				}
 
@@ -189,19 +184,16 @@ export default function App() {
 					// console.log("key is decimal");
 					if (state === "") add("0."); // empty string
 					else if (/\d/.test(state.at(-1))) add(key); // last key is a number
-					else if (/[+\-*\/]/.test(state.at(-1))) add(" 0."); // last key is a sign
+					else if (/[+\-×÷]/.test(state.at(-1))) add(" 0."); // last key is a sign
 				}
 
-				if (key.match(/[+\-*\/]/)) {
+				if (key.match(/[+\-×÷]/)) {
 					// console.log("key is sign");
-					console.log(state);
-					console.log(state.at(-2));
-					console.log(state.at(-4));
-					if (!/[+\-*\/]/.test(state.at(-1)) || !/[+\-*\/]/.test(state.at(-3))) {
-						// if the last 2 keys are not both signs
+					if (!/[+\-×÷]/.test(state.at(-1)) || !/[+\-×÷]/.test(state.at(-3))) {
+						// only add if the last 2 keys are not both signs
 						if (state === "") add(key); // empty string
 						if (/\d/.test(state.at(-1))) add(` ${key}`); // last key is a number
-						else if (/[+\-*\/]/.test(state.at(-1))) {
+						else if (/[+\-×÷]/.test(state.at(-1))) {
 							// last key is a sign
 							if (key === "-") add(` ${key}`); // special case for negative sign
 							else replaceLastKey(key);
@@ -210,13 +202,10 @@ export default function App() {
 				}
 			}
 
-			if(key === "Backspace") clearEntry();
+			if (key === "Backspace") clearEntry();
 			if (key === "Enter" || key === "=") calculate();
 		}
 	}
-
-	// console.log("state :>>", state);
-	// console.log("lastKey :>>", lastKey);
 
 	return (
 		<div className="App">
@@ -226,18 +215,17 @@ export default function App() {
 					by <a href="https://github.com/vietan0">Viet An</a>
 				</p>
 			</header>
-			<div id="field">
-				<small>{ans}</small>
-				<input
-					type="text"
-					// onChange={handleChange}
-					onKeyDown={handleKeyDown}
-					value={state}
-					placeholder="input"
-					id="display"
-					className="form-control"
-				/>
-				<small>lastKey: {lastKey}</small>
+			<div
+				// onChange={handleChange}
+				onKeyDown={handleKeyDown}
+				id="display"
+				tabIndex="0"
+			>
+				<small>
+					<span id="ans">{ans}</span>
+					<span id="lastKey">lastKey: {lastKey}</span>
+				</small>
+				<p id="state">{state}</p>
 			</div>
 			<div className="grid" id="calculator-grid">
 				<button onClick={handleClick} id="seven">

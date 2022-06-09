@@ -25,16 +25,33 @@ header > * {
 	margin: 0;
 }
 
-#field {
-	#display {
+#display {
+	min-height: 64px;
+	border: 1px solid hsl(0, 0%, 80%);
+	border-radius: 8px;
+	padding: 12px 12px 4px 12px;
+	display: flex;
+	flex-direction: column;
+
+	#state {
 		font-size: 1.7rem;
 		font-weight: 500;
+		margin: 0;
 		letter-spacing: 0.05rem;
 	}
 
 	small {
+		font-size: 0.875rem;
 		color: hsl(0, 0%, 50%);
-		margin-left: 8px;
+		line-height: 15px;
+		min-height: 15px;
+		display: flex;
+		justify-content: space-between;
+
+		#lastKey {
+			font-family: monospace;
+			min-width: 62px;
+		}
 	}
 }
 
@@ -59,7 +76,7 @@ header > * {
 		&:hover {
 			background-color: hsl(240, 23%, 88%);
 		}
-		&:focus,
+		
 		&:active {
 			box-shadow: 0 0 0 0.15rem hsla(240, 2%, 64%, 0.8);
 			color: inherit;
@@ -72,7 +89,7 @@ header > * {
 		&:hover {
 			background-color: hsl(229, 80%, 60%);
 		}
-		&:focus {
+		&:active {
 			box-shadow: 0 0 0 0.15rem hsla(216, 100%, 68%, 0.8);
 		}
 	}
@@ -83,7 +100,7 @@ header > * {
 		&:hover {
 			background-color: hsl(0, 80%, 57%);
 		}
-		&:focus {
+		&:active {
 			box-shadow: 0 0 0 0.15rem hsla(354, 100%, 82%, 0.8);
 		}
 	}
@@ -96,7 +113,7 @@ header > * {
 		&:hover {
 			background-color: hsl(229, 30%, 95%);
 		}
-		&:focus {
+		&:active {
 			box-shadow: 0 0 0 0.15rem hsla(240, 30%, 84%, 0.8);
 		}
 	}
@@ -117,7 +134,7 @@ header > * {
 		&:hover {
 			background-color: hsl(229, 86%, 86%);
 		}
-		&:focus {
+		&:active {
 			box-shadow: 0 0 0 0.15rem rgba(118, 139, 231, 0.8);
 		}
 	}
