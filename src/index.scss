@@ -1,0 +1,143 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap");
+
+body {
+	font-family: "DM Sans", "Segoe UI", "Roboto", "Helvetica Neue", sans-serif;
+}
+
+h1 {
+	font-size: min(calc(1.375rem + 1.5vw), 32px);
+	letter-spacing: -0.25px;
+}
+
+.App {
+	max-width: 640px;
+	min-height: 90vh;
+	padding: 40px;
+	margin: auto;
+
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 24px;
+}
+
+header > * {
+	margin: 0;
+}
+
+#field {
+	#display {
+		font-size: 1.7rem;
+		font-weight: 500;
+		letter-spacing: 0.05rem;
+	}
+
+	small {
+		color: hsl(0, 0%, 50%);
+		margin-left: 8px;
+	}
+}
+
+#calculator-grid {
+	border-radius: 4px;
+	min-height: 200px;
+
+	display: grid;
+	gap: 8px;
+	grid-auto-rows: 1fr;
+	grid-template-areas:
+		"num num num ac ac"
+		"num num num ce ce"
+		"num num num multiply divide"
+		"num num num add subtract";
+
+	button {
+		font-weight: 500;
+		border: none;
+		border-radius: 4px;
+		background-color: hsl(240, 30%, 94%);
+		&:hover {
+			background-color: hsl(240, 23%, 88%);
+		}
+		&:focus,
+		&:active {
+			box-shadow: 0 0 0 0.15rem hsla(240, 2%, 64%, 0.8);
+			color: inherit;
+		}
+	}
+
+	#equals {
+		background-color: hsl(229, 100%, 69%);
+		color: white;
+		&:hover {
+			background-color: hsl(229, 80%, 60%);
+		}
+		&:focus {
+			box-shadow: 0 0 0 0.15rem hsla(216, 100%, 68%, 0.8);
+		}
+	}
+
+	#clear {
+		background-color: hsl(0, 100%, 67%);
+		color: white;
+		&:hover {
+			background-color: hsl(0, 80%, 57%);
+		}
+		&:focus {
+			box-shadow: 0 0 0 0.15rem hsla(354, 100%, 82%, 0.8);
+		}
+	}
+
+	#ce {
+		background-color: transparent;
+		box-shadow: inset 0 0 0 0.15rem hsl(240, 30%, 84%);
+		color: hsl(240, 10%, 42%);
+		// background-color: hsl(0, 0%, 80%);
+		&:hover {
+			background-color: hsl(229, 30%, 95%);
+		}
+		&:focus {
+			box-shadow: 0 0 0 0.15rem hsla(240, 30%, 84%, 0.8);
+		}
+	}
+
+	#equals,
+	#add,
+	#subtract,
+	#multiply,
+	#divide {
+		font-size: 22px;
+	}
+
+	#add,
+	#subtract,
+	#multiply,
+	#divide {
+		background-color: hsl(229, 87%, 91%);
+		&:hover {
+			background-color: hsl(229, 86%, 86%);
+		}
+		&:focus {
+			box-shadow: 0 0 0 0.15rem rgba(118, 139, 231, 0.8);
+		}
+	}
+
+	#clear {
+		grid-area: ac;
+	}
+	#ce {
+		grid-area: ce;
+	}
+	#add {
+		grid-area: add;
+	}
+	#subtract {
+		grid-area: subtract;
+	}
+	#multiply {
+		grid-area: multiply;
+	}
+	#divide {
+		grid-area: divide;
+	}
+}
