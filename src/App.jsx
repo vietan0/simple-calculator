@@ -70,7 +70,7 @@ export default function App() {
 
 		let answer = [...mixed][0];
 		// * 4. Fix JS rounding issue
-		if (answer.toString().includes(".")) {
+		if (answer.toString().includes(".") && answer.toString().length > 10) {
 			let decimalDigits = answer.toString().split(".")[1].slice(0, -1).split("");
 			if (decimalDigits.every(d => d === "9" || d === "0")) answer = answer.toFixed(0);
 			else if (decimalDigits.slice(1).every(d => d === "9" || d === "0"))
