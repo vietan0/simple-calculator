@@ -68,7 +68,7 @@ export default function App() {
 			}
 		}
 
-		let answer = [...mixed][0];
+		let answer = mixed[0];
 		// * 4. Fix JS rounding issue
 		if (answer.toString().includes(".") && answer.toString().length > 10) {
 			let decimalDigits = answer.toString().split(".")[1].slice(0, -1).split("");
@@ -80,6 +80,7 @@ export default function App() {
 		setAns(`${state} =`);
 		setState(isNaN(answer) ? "NaN" : answer);
 	}
+
 	function clear() {
 		setLastKey("AC");
 		setState("0");
@@ -147,7 +148,7 @@ export default function App() {
 	}
 	function handleKeyDown(e) {
 		if (e.key.match(/\d|[+\-*/.]|Backspace|Enter|=/)) {
-			e.preventDefault(); // override browser's
+			e.preventDefault(); // override browser's shortcut ("/" for Quick Find)
 			let key = e.key === "*" ? "×" : e.key === "/" ? "÷" : e.key;
 			setLastKey(key);
 

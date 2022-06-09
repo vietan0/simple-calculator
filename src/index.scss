@@ -2,6 +2,10 @@
 
 body {
 	font-family: "DM Sans", "Segoe UI", "Roboto", "Helvetica Neue", sans-serif;
+
+	::selection {
+		background-color: hsl(226, 100%, 85%);
+	}
 }
 
 h1 {
@@ -161,5 +165,18 @@ header > * {
 	}
 	#divide {
 		grid-area: divide;
+	}
+}
+
+@media (max-width: 400px) {
+	#calculator-grid {
+		height: 320px;
+		gap: 4px;
+		grid-template-areas:
+			"ac ac ce ce"
+			"num num num divide"
+			"num num num multiply"
+			"num num num subtract"
+			"num num num add ";
 	}
 }
